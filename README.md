@@ -12,7 +12,7 @@ plan includes $5 of usage credit every month.
 | [Google Trends Scraper: Unlimited Keywords on One Scale](https://apify.com/honestdata/google-trends-one-scale) | Up to 200 keywords on one consistent scale in one run, an error bar on every keyword, small terms that Google rounds to 0 as real numbers, and glitches in Google's data flagged | $0.005 per keyword |
 | [AliExpress Scraper: Real Prices, Ads Flagged](https://apify.com/honestdata/aliexpress-product-search) | AliExpress US search results with the regular price next to the new-shopper teaser price, units sold as a number, and paid ads and free-gift promos flagged | $0.003 per product |
 | [YouTube Transcript Scraper](https://apify.com/honestdata/youtube-transcript-scraper) | Transcripts in bulk, each labelled manual or auto-generated, with a flag when the language isn't the one you asked for and the share of the video covered | $0.002 per transcript |
-| [Product Demand Radar](https://apify.com/honestdata/product-demand-radar) | Up to 50 product ideas ranked by Google search demand and AliExpress US supply in one run | $0.03 per idea |
+| [Product Demand Radar](https://apify.com/honestdata/product-demand-radar) | Up to 50 product ideas ranked by Google search demand and AliExpress US supply in one run | $0.05 per idea |
 
 Misses are free: keywords with no data, videos without a transcript and ads you filter out aren't billed.
 

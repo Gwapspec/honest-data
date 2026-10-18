@@ -1,6 +1,6 @@
 """Rank product ideas by Google search demand and AliExpress US supply in one run.
 
-pip install apify-client; export APIFY_TOKEN=...   ($0.03 per idea)
+pip install apify-client; export APIFY_TOKEN=...   ($0.05 per idea)
 """
 import os
 

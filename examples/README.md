@@ -14,7 +14,7 @@ python python/google_trends.py
 | [python/google_trends.py](python/google_trends.py) | Google Trends, many keywords on one scale | 5 keywords ≈ $0.025 |
 | [python/aliexpress.py](python/aliexpress.py) | AliExpress US search with real prices | 60 products ≈ $0.18 |
 | [python/youtube_transcripts.py](python/youtube_transcripts.py) | YouTube transcripts in bulk | 2 videos ≈ $0.004 |
-| [python/product_demand_radar.py](python/product_demand_radar.py) | Demand and supply per product idea | 3 ideas ≈ $0.09 |
+| [python/product_demand_radar.py](python/product_demand_radar.py) | Demand and supply per product idea | 3 ideas ≈ $0.15 |
 
 ## Without Python
 
