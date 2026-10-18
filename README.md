@@ -27,6 +27,8 @@ Misses are free: keywords with no data, videos without a transcript and ads you 
 
 ## Use the tools
 
+- [40 ready-made examples](EXAMPLES.md): real inputs, real results, one click to run (also on the
+  [website](https://gwapspec.github.io/honest-data/examples.html)).
 - [Code examples](examples/) in Python and curl.
 - From Claude, Cursor or any MCP client: add `https://mcp.apify.com?tools=honestdata/google-trends-one-scale`
   (or any of the four tool names) as a remote MCP server.

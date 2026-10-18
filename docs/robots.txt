@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://gwapspec.github.io/honest-data/sitemap.xml
