@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Honest Data</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Data tools on Apify Store that show what their data can't tell you: error bars, glitch flags, real prices. Plus the spring 2026 Google Trends glitch report.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: an instrument datasheet. A thesis hero with a live readout, the glitch report as the
+   centerpiece chart, then four tool spec sheets in a 2-column grid that stacks on phones. */
+:root {
+  --bg: #F4F7F5;
+  --surface: #FFFFFF;
+  --ink: #13201B;
+  --ink-2: #4B5953;
+  --rule: #D5DFDA;
+  --tint: rgba(11, 110, 79, 0.07);
+  --brand: #0B6E4F;
+  --brand-ink: #0B6E4F;
+  --on-brand: #FFFFFF;
+  --on-brand-2: rgba(255, 255, 255, 0.74);
+  --gold: #FFC24B;
+  --gold-ink: #8A5A00;
+  --band: rgba(255, 194, 75, 0.24);
+  --story: #0B6E4F;
+  --context: #7D8796;
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Instrument Sans", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0C1310; --surface: #121B17; --ink: #E6EEE9; --ink-2: #A2B1AA; --rule: #26332D;
+    --tint: rgba(79, 196, 150, 0.08); --brand-ink: #4FC496; --gold-ink: #FFC24B;
+    --band: rgba(255, 194, 75, 0.14); --story: #2F9E70; --context: #97A0B4; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0C1310; --surface: #121B17; --ink: #E6EEE9; --ink-2: #A2B1AA; --rule: #26332D;
+  --tint: rgba(79, 196, 150, 0.08); --brand-ink: #4FC496; --gold-ink: #FFC24B;
+  --band: rgba(255, 194, 75, 0.14); --story: #2F9E70; --context: #97A0B4; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 17px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--brand-ink); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
+.wrap {
+  max-width: 1080px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.12; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.3rem, 5.4vw, 3.9rem); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.65rem, 3.4vw, 2.4rem); font-weight: 800; letter-spacing: -0.01em; }
+h3 { font-size: 1.3rem; font-weight: 600; }
+p { margin: 0; max-width: 65ch; }
+.eyebrow {
+  font-family: var(--font-mono); font-size: 0.78rem; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2);
+}
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+section { padding-block: clamp(48px, 8vw, 88px); border-top: 1px solid var(--rule); }
+
+/* Header */
+.top { padding-block: 18px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; color: var(--ink); text-decoration: none; }
+.brand svg { width: 30px; height: 30px; flex: none; }
+.nav { display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 0.95rem; }
+.nav a { color: var(--ink-2); text-decoration: none; }
+.nav a:hover { color: var(--ink); text-decoration: underline; }
+
+/* Hero */
+.hero { display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(28px, 5vw, 56px); align-items: center; padding-block: clamp(36px, 7vw, 80px) clamp(48px, 8vw, 88px); }
+.hero > * { min-width: 0; }
+.hero-copy { display: grid; gap: 20px; }
+.lede { font-size: 1.15rem; color: var(--ink-2); }
+.ctas { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; }
+.btn {
+  display: inline-block; background: var(--brand); color: var(--on-brand); text-decoration: none;
+  font-weight: 600; padding: 12px 20px; border-radius: 8px;
+}
+.btn:hover { filter: brightness(1.08); }
+.readout {
+  background: var(--brand); color: var(--on-brand); border-radius: 14px;
+  padding: clamp(18px, 3vw, 28px); display: grid; gap: 14px;
+}
+.readout .eyebrow { color: var(--on-brand-2); }
+.readout table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: clamp(0.82rem, 1.6vw, 0.98rem); }
+.readout td { padding: 8px 0; border-top: 1px solid rgba(255, 255, 255, 0.18); vertical-align: baseline; }
+.readout td.num { text-align: right; padding-left: 12px; white-space: nowrap; }
+.readout .pm { color: var(--gold); }
+.readout .note { font-size: 0.92rem; color: var(--on-brand-2); }
+.readout .zero { color: var(--gold); font-weight: 600; }
+
+/* Report */
+.report-head { display: grid; gap: 16px; margin-bottom: 28px; }
+figure { margin: 0; background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: clamp(14px, 2.5vw, 24px); position: relative; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 0.9rem; color: var(--ink-2); margin-bottom: 8px; }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.legend svg { width: 28px; height: 10px; flex: none; }
+.chart { width: 100%; height: auto; display: block; touch-action: pan-y; }
+.chart text { font-family: var(--font-mono); font-size: 12px; }
+.t-ink { fill: var(--ink); }
+.t-ink2 { fill: var(--ink-2); }
+.t-gold { fill: var(--gold-ink); }
+.tip {
+  position: absolute; pointer-events: none; background: var(--ink); color: var(--bg);
+  font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.5; padding: 8px 10px; border-radius: 6px;
+  white-space: nowrap; transform: translate(-50%, -100%);
+}
+figcaption { font-size: 0.88rem; color: var(--ink-2); margin-top: 10px; max-width: 75ch; }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-block: 28px; }
+.fact { border-top: 2px solid var(--ink); padding-top: 12px; display: grid; gap: 4px; align-content: start; }
+.fact .big { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.6rem, 3.2vw, 2.2rem); line-height: 1.1; }
+.fact .small { font-size: 0.92rem; color: var(--ink-2); }
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+.two > div { display: grid; gap: 10px; align-content: start; }
+ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+details { margin-top: 28px; }
+summary { cursor: pointer; font-weight: 600; color: var(--brand-ink); }
+.table-scroll { overflow-x: auto; margin-top: 12px; }
+.data { border-collapse: collapse; font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 0.85rem; }
+.data th, .data td { padding: 4px 16px 4px 0; text-align: right; border-bottom: 1px solid var(--rule); }
+.data th:first-child, .data td:first-child { text-align: left; }
+.data tr.flag td { background: var(--band); }
+
+/* Tools */
+.section-head { display: grid; gap: 12px; margin-bottom: 28px; }
+.tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.tool {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 12px;
+  padding: clamp(18px, 2.6vw, 26px); display: grid; gap: 14px; grid-template-rows: auto auto auto 1fr auto;
+}
+.tool .id { font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-2); overflow-wrap: anywhere; }
+.tool .fact-line {
+  background: var(--tint); border-radius: 8px; padding: 10px 12px;
+  font-family: var(--font-mono); font-size: 0.86rem; line-height: 1.55;
+}
+.tool dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 0; font-size: 0.95rem; align-content: start; }
+.tool dt { color: var(--ink-2); }
+.tool dd { margin: 0; }
+.tool .go { font-weight: 600; }
+
+/* Principles + agents */
+.principles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 22px; }
+.principle { display: grid; gap: 6px; align-content: start; }
+.principle .sym { font-family: var(--font-mono); font-weight: 500; color: var(--gold-ink); font-size: 1.1rem; }
+.mcp { display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; margin-top: 16px; }
+.mcp code {
+  flex: 1 1 320px; min-width: 0; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px;
+  padding: 10px 12px; font-family: var(--font-mono); font-size: 0.8rem; overflow-wrap: anywhere;
+}
+.mcp button {
+  font: inherit; font-weight: 600; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--ink); border-radius: 8px; padding: 8px 16px; cursor: pointer;
+}
+footer { border-top: 1px solid var(--rule); padding-block: 28px 40px; font-size: 0.9rem; color: var(--ink-2); display: grid; gap: 6px; }
+
+@media (max-width: 820px) {
+  .hero, .two, .tools { grid-template-columns: minmax(0, 1fr); }
+  .facts { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .btn, .nav a { transition: filter 0.15s ease, color 0.15s ease; }
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#top" aria-label="Honest Data, back to top">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" style="fill: var(--brand)"/><path d="M16 7.5v10M11 12.5h10M11 23h10" style="stroke: var(--on-brand)" stroke-width="2.6" stroke-linecap="round" fill="none"/><circle cx="25" cy="7" r="2.6" style="fill: var(--gold)"/></svg>
+      Honest Data
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#report">Google Trends report</a>
+      <a href="#tools">Tools</a>
+      <a href="#honest">How we test</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <div class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">Data tools on Apify Store</span>
+        <h1>Data tools that show their error bars.</h1>
+        <p class="lede">Four tools for Google Trends, AliExpress and YouTube. Each one tells you what its data can't, and you only pay for results that came back.</p>
+        <div class="ctas">
+          <a class="btn" href="#tools">See the 4 tools</a>
+          <a href="#report">Read the Google Trends report</a>
+        </div>
+      </div>
+      <div class="readout" aria-label="Example: two keywords on one Google Trends scale">
+        <span class="eyebrow">Google Trends · US · past 12 months</span>
+        <table>
+          <tr><td>coffee</td><td class="num">77.846 <span class="pm">±0.10%</span></td></tr>
+          <tr><td>chicory coffee</td><td class="num">0.069 <span class="pm">±1.19%</span></td></tr>
+          <tr><td>dandelion coffee</td><td class="num">0.017 <span class="pm">±1.02%</span></td></tr>
+        </table>
+        <p class="note">Compare coffee and dandelion coffee in Google Trends and dandelion coffee reads <span class="zero">0</span> every week. On one scale it's about 1/4,600th of coffee, measured to within about 1%.</p>
+      </div>
+    </div>
+
+    <section id="report" aria-labelledby="report-title">
+      <div class="report-head">
+        <span class="eyebrow">Report · October 2026</span>
+        <h2 id="report-title">Small US searches doubled on Google Trends this spring. Demand didn't.</h2>
+        <p>We tracked 20 everyday US searches in four groups (household, hobby, auto, pets and garden) against the same week of 2025, so seasonality cancels out. From late March to late June 2026 they ran 1.5 to 2.2 times their 2025 level, all at the same time. Big searches like weather, gmail and translate stayed flat. By August it was gone.</p>
+      </div>
+
+      <figure>
+        <div class="legend" aria-hidden="true">
+          <span><svg viewBox="0 0 28 10"><line x1="1" y1="5" x2="27" y2="5" style="stroke: var(--story)" stroke-width="3" stroke-linecap="round"/></svg>Small searches (median of 20)</span>
+          <span><svg viewBox="0 0 28 10"><line x1="1" y1="5" x2="27" y2="5" style="stroke: var(--context)" stroke-width="2" stroke-dasharray="6 5"/></svg>Big searches (median of 5)</span>
+          <span><svg viewBox="0 0 28 10"><rect x="1" y="0" width="26" height="10" rx="2" style="fill: var(--band)"/></svg>Flagged as a market-wide jump</span>
+        </div>
+        <svg class="chart" id="chart" viewBox="0 0 760 340" role="img" aria-label="Line chart. Small US searches on Google Trends compared with the same week of 2025 rise from about 1.0 in January to a peak of 2.2 in the week of April 12, stay high until late June, and return to about 1.0 by August. Big searches stay between 0.8 and 1.0 all year."></svg>
+        <div class="tip" id="tip" hidden></div>
+        <figcaption>Each point is the median of 20 small searches (or 5 big ones) divided by the same week of 2025, so 1.0 means the same as last year. Source: Google Trends, our own runs. Weekly numbers are in the table below.</figcaption>
+      </figure>
+
+      <div class="facts">
+        <div class="fact"><span class="big mono">×2.2</span><span class="small">peak, week of April 12</span></div>
+        <div class="fact"><span class="big mono">Mar 22 – Jun 28</span><span class="small">the stretch our check flags</span></div>
+        <div class="fact"><span class="big mono">×1.07 · ×1.14 · ×1.32</span><span class="small">UK, Australia and Canada over the same spring</span></div>
+      </div>
+
+      <div class="two">
+        <div>
+          <h3>What it means</h3>
+          <ul>
+            <li>Growth for long-tail terms that compares spring 2026 with any other period is inflated.</li>
+            <li>Peak dates between late March and late June 2026 are suspect.</li>
+            <li>Big head terms look fine.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Check your own terms</h3>
+          <p>Pull a handful of unrelated control terms of similar size next to yours. If the controls jump together, the jump is Google's data, not your keyword. Our Google Trends tool runs this check on every run and flags the dates for you.</p>
+        </div>
+      </div>
+
+      <details>
+        <summary>See the weekly numbers</summary>
+        <div class="table-scroll">
+          <table class="data" id="data-table">
+            <thead><tr><th scope="col">Week of</th><th scope="col">Small searches vs 2025</th><th scope="col">Big searches vs 2025</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+
+    <section id="tools" aria-labelledby="tools-title">
+      <div class="section-head">
+        <span class="eyebrow">Apify Store · pay per result</span>
+        <h2 id="tools-title">Four tools, each honest about its data</h2>
+        <p>Run them in your browser, on a schedule, through the API, or from an AI assistant. Every price is per result that came back.</p>
+      </div>
+      <div class="tools">
+        <article class="tool">
+          <div><h3>Google Trends, on one scale</h3><div class="id">honestdata/google-trends-one-scale</div></div>
+          <p>Compare 5 to 200 keywords on one consistent scale, with an error bar on every keyword.</p>
+          <div class="fact-line">Small keywords Google rounds to 0 come back as real numbers. Market-wide glitches like spring 2026 are flagged.</div>
+          <dl>
+            <dt>Price</dt><dd><span class="mono">$0.005</span> per keyword</dd>
+            <dt>Free</dt><dd>Keywords with no usable data, and the glitch check</dd>
+            <dt>Flags</dt><dd>Peaks and growth inside a market-wide jump</dd>
+          </dl>
+          <a class="go" href="https://apify.com/honestdata/google-trends-one-scale">Open in Apify Store →</a>
+        </article>
+        <article class="tool">
+          <div><h3>AliExpress search, real prices</h3><div class="id">honestdata/aliexpress-product-search</div></div>
+          <p>AliExpress US search results with the price a returning buyer pays, units sold and ship-from country.</p>
+          <div class="fact-line">83% of prices a scraper sees are first-order-only deals. Median shown $1.33, median regular $10.91.</div>
+          <dl>
+            <dt>Price</dt><dd><span class="mono">$0.003</span> per product</dd>
+            <dt>Free</dt><dd>Duplicates, and anything "organic only" leaves out</dd>
+            <dt>Flags</dt><dd>Paid ads, free-gift promos, teaser prices</dd>
+          </dl>
+          <a class="go" href="https://apify.com/honestdata/aliexpress-product-search">Open in Apify Store →</a>
+        </article>
+        <article class="tool">
+          <div><h3>YouTube transcripts</h3><div class="id">honestdata/youtube-transcript-scraper</div></div>
+          <p>Transcripts in bulk as clean text and timed segments, for summaries, research and RAG.</p>
+          <div class="fact-line">Every transcript says whether the channel wrote it or speech recognition did, and how much of the video it covers.</div>
+          <dl>
+            <dt>Price</dt><dd><span class="mono">$0.002</span> per transcript</dd>
+            <dt>Free</dt><dd>Videos without a transcript, with the reason</dd>
+            <dt>Flags</dt><dd>Auto-generated captions, language mismatches</dd>
+          </dl>
+          <a class="go" href="https://apify.com/honestdata/youtube-transcript-scraper">Open in Apify Store →</a>
+        </article>
+        <article class="tool">
+          <div><h3>Product Demand Radar</h3><div class="id">honestdata/product-demand-radar</div></div>
+          <p>Rank a list of product ideas by Google search demand and AliExpress US supply, in one run.</p>
+          <div class="fact-line">Real prices, units sold, ad share and US stock next to glitch-adjusted search growth. The same numbers from separate tools cost about $0.19 per idea.</div>
+          <dl>
+            <dt>Price</dt><dd><span class="mono">$0.03</span> per product idea</dd>
+            <dt>Free</dt><dd>Ideas missing either demand or supply</dd>
+            <dt>Flags</dt><dd>Peaks inside Google glitches, ad-crowded searches</dd>
+          </dl>
+          <a class="go" href="https://apify.com/honestdata/product-demand-radar">Open in Apify Store →</a>
+        </article>
+      </div>
+    </section>
+
+    <section id="honest" aria-labelledby="honest-title">
+      <div class="section-head">
+        <span class="eyebrow">How we keep it honest</span>
+        <h2 id="honest-title">What every tool promises</h2>
+      </div>
+      <div class="principles">
+        <div class="principle"><span class="sym">±</span><h3>Error bars, measured</h3><p>Uncertainty comes from your own run, never a guess or a blank.</p></div>
+        <div class="principle"><span class="sym">!</span><h3>Glitches flagged</h3><p>When the source's data shifts across the board, the affected dates are marked.</p></div>
+        <div class="principle"><span class="sym">$</span><h3>Teasers labelled</h3><p>Ads, promos and first-order prices are marked, never passed off as normal results.</p></div>
+        <div class="principle"><span class="sym">0</span><h3>Misses are free</h3><p>No data, no transcript, no charge. You pay for results that came back.</p></div>
+        <div class="principle"><span class="sym">✓</span><h3>Tested every morning</h3><p>An automated check runs each tool on real inputs daily and checks the data itself.</p></div>
+      </div>
+
+      <div style="margin-top: 48px; display: grid; gap: 10px;">
+        <h3>Use them from an AI assistant</h3>
+        <p>Claude, Cursor and other assistants can find and run all four tools through Apify's MCP server. Add this address as an MCP server:</p>
+        <div class="mcp">
+          <code id="mcp-url">https://mcp.apify.com?tools=honestdata/google-trends-one-scale,honestdata/aliexpress-product-search,honestdata/youtube-transcript-scraper,honestdata/product-demand-radar</code>
+          <button type="button" id="copy-mcp">Copy</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>Honest Data publishes on Apify Store as <a href="https://apify.com/honestdata">honestdata</a>.</span>
+    <span>Figures come from our own runs in October 2026.</span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var RAW = "01-04,1.012,0.884;01-11,1.026,0.875;01-18,1.055,0.903;01-25,1.091,0.887;02-01,1.25,0.882;02-08,1.351,0.848;02-15,1.369,0.854;02-22,1.246,0.882;03-01,1.152,0.891;03-08,1.17,0.908;03-15,1.22,0.912;03-22,1.503,0.914;03-29,1.863,0.914;04-05,2.202,0.931;04-12,2.215,0.933;04-19,2.014,0.913;04-26,1.7,0.875;05-03,1.708,0.889;05-10,1.826,0.894;05-17,1.923,0.883;05-24,1.785,0.906;05-31,1.699,0.89;06-07,1.68,0.931;06-14,1.676,0.904;06-21,1.489,0.925;06-28,1.342,0.907;07-05,1.14,0.914;07-12,1.038,0.917;07-19,0.995,0.917;07-26,0.982,0.934;08-02,1.01,0.967;08-09,0.985,0.949;08-16,0.991,0.914;08-23,0.978,0.868;08-30,1.006,0.833;09-06,1.026,0.823;09-13,1.037,0.809;09-20,1.023,0.833;09-27,1.015,0.84;10-04,1.005,0.847";
+  var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  var data = RAW.split(";").map(function (s) {
+    var p = s.split(",");
+    return { d: p[0], small: +p[1], big: +p[2] };
+  });
+  function label(d) { return MONTHS[+d.slice(0, 2) - 1] + " " + (+d.slice(3)); }
+  var FLAG_FROM = "03-22", FLAG_TO = "06-28";
+  function flagged(d) { return d >= FLAG_FROM && d <= FLAG_TO; }
+
+  // Drawn at the chart's real pixel width, so text stays readable on phones.
+  var Y0 = 0.7, Y1 = 2.4;
+  var W, H, M, step, cross, dotS, dotB, drawnWidth = 0;
+  var last = data.length - 1;
+  function x(i) { return M.l + i * step; }
+  function y(v) { return M.t + (Y1 - v) * (H - M.t - M.b) / (Y1 - Y0); }
+  var NS = "http://www.w3.org/2000/svg";
+  var svg = document.getElementById("chart");
+  var tip = document.getElementById("tip");
+  var fig = svg.parentNode;
+  function el(name, attrs) {
+    var e = document.createElementNS(NS, name);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    svg.appendChild(e);
+    return e;
+  }
+  function text(str, attrs) { var t = el("text", attrs); t.textContent = str; return t; }
+  function path(key) {
+    return data.map(function (p, i) { return (i ? "L" : "M") + x(i).toFixed(1) + "," + y(p[key]).toFixed(1); }).join("");
+  }
+
+  function render() {
+    var cw = Math.round(svg.getBoundingClientRect().width) || 760;
+    if (Math.abs(cw - drawnWidth) < 4) return;
+    drawnWidth = cw;
+    var narrow = cw < 560;
+    W = Math.max(300, Math.min(cw, 900));
+    H = narrow ? 290 : 340;
+    M = { t: 24, r: narrow ? 46 : 116, b: 34, l: 44 };
+    step = (W - M.l - M.r) / last;
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    hide();
+
+    // Flagged stretch, labelled at its foot so it never meets the peak label
+    var i0 = data.findIndex(function (p) { return p.d === FLAG_FROM; });
+    var i1 = data.findIndex(function (p) { return p.d === FLAG_TO; });
+    el("rect", { x: x(i0) - step / 2, y: M.t, width: x(i1) - x(i0) + step, height: H - M.t - M.b, style: "fill: var(--band)" });
+    text(narrow ? "Flagged" : "Flagged in every run", { x: x(i0) - step / 2 + 6, y: H - M.b - 8, "class": "t-gold" });
+
+    // Grid and y labels (1.0 = same week of 2025)
+    [1.0, 1.5, 2.0].forEach(function (v) {
+      el("line", { x1: M.l, x2: W - M.r, y1: y(v), y2: y(v), style: "stroke: var(" + (v === 1 ? "--ink-2" : "--rule") + ")", "stroke-width": v === 1 ? 1.2 : 1 });
+      text("×" + v.toFixed(1), { x: M.l - 8, y: y(v) + 4, "text-anchor": "end", "class": "t-ink2" });
+    });
+
+    // Month labels on the first week of each month (every other month on phones)
+    var seen = {}, n = 0;
+    data.forEach(function (p, i) {
+      var m = p.d.slice(0, 2);
+      if (seen[m]) return;
+      seen[m] = true;
+      if (!narrow || n++ % 2 === 0) text(MONTHS[+m - 1], { x: x(i), y: H - 10, "text-anchor": "middle", "class": "t-ink2" });
+    });
+
+    el("path", { d: path("big"), fill: "none", style: "stroke: var(--context)", "stroke-width": 2, "stroke-dasharray": "6 5", "stroke-linejoin": "round" });
+    el("path", { d: path("small"), fill: "none", style: "stroke: var(--story)", "stroke-width": 3, "stroke-linejoin": "round", "stroke-linecap": "round" });
+
+    // Peak marker and end labels
+    var ip = data.findIndex(function (p) { return p.d === "04-12"; });
+    el("circle", { cx: x(ip), cy: y(data[ip].small), r: 5.5, style: "fill: var(--story); stroke: var(--surface)", "stroke-width": 2 });
+    text(narrow ? "×2.2, Apr 12" : "×2.2, week of Apr 12", { x: x(ip) + 10, y: y(data[ip].small) - 8, "class": "t-ink" });
+    text(narrow ? "Small" : "Small searches", { x: x(last) + 8, y: y(data[last].small) + 4, "class": "t-ink" });
+    text(narrow ? "Big" : "Big searches", { x: x(last) + 8, y: y(data[last].big) + 4, "class": "t-ink2" });
+
+    // Hover readout layer
+    cross = el("line", { y1: M.t, y2: H - M.b, style: "stroke: var(--ink-2)", "stroke-width": 1, visibility: "hidden" });
+    dotS = el("circle", { r: 4.5, style: "fill: var(--story)", visibility: "hidden" });
+    dotB = el("circle", { r: 4, style: "fill: var(--context)", visibility: "hidden" });
+    var hit = el("rect", { x: M.l - step / 2, y: M.t, width: W - M.l - M.r + step, height: H - M.t - M.b, fill: "transparent" });
+    hit.addEventListener("pointermove", show);
+    hit.addEventListener("pointerdown", show);
+    hit.addEventListener("pointerleave", hide);
+  }
+
+  function show(evt) {
+    var r = svg.getBoundingClientRect();
+    var px = (evt.clientX - r.left) * W / r.width;
+    var i = Math.max(0, Math.min(last, Math.round((px - M.l) / step)));
+    var p = data[i];
+    [cross, dotS, dotB].forEach(function (n) { n.setAttribute("visibility", "visible"); });
+    cross.setAttribute("x1", x(i)); cross.setAttribute("x2", x(i));
+    dotS.setAttribute("cx", x(i)); dotS.setAttribute("cy", y(p.small));
+    dotB.setAttribute("cx", x(i)); dotB.setAttribute("cy", y(p.big));
+    tip.innerHTML = "Week of " + label(p.d) + (flagged(p.d) ? " · flagged" : "") +
+      "<br>Small searches ×" + p.small.toFixed(2) + "<br>Big searches ×" + p.big.toFixed(2);
+    tip.hidden = false;
+    var fr = fig.getBoundingClientRect();
+    var left = r.left - fr.left + x(i) * r.width / W;
+    var top = r.top - fr.top + y(Math.max(p.small, p.big)) * r.height / H - 12;
+    var half = tip.offsetWidth / 2 + 8;
+    tip.style.left = Math.max(half, Math.min(fr.width - half, left)) + "px";
+    tip.style.top = Math.max(tip.offsetHeight + 4, top) + "px";
+  }
+  function hide() {
+    [cross, dotS, dotB].forEach(function (n) { if (n) n.setAttribute("visibility", "hidden"); });
+    tip.hidden = true;
+  }
+  render();
+  var resizeTimer;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(render, 150);
+  });
+
+  // Table view of the same numbers
+  var body = document.querySelector("#data-table tbody");
+  data.forEach(function (p) {
+    var tr = document.createElement("tr");
+    if (flagged(p.d)) tr.className = "flag";
+    tr.innerHTML = "<td>" + label(p.d) + ", 2026</td><td>×" + p.small.toFixed(3) + "</td><td>×" + p.big.toFixed(3) + "</td>";
+    body.appendChild(tr);
+  });
+
+  // Copy the MCP address
+  var btn = document.getElementById("copy-mcp");
+  var code = document.getElementById("mcp-url");
+  btn.addEventListener("click", function () {
+    function selectIt() {
+      var range = document.createRange();
+      range.selectNodeContents(code);
+      var s = window.getSelection();
+      s.removeAllRanges();
+      s.addRange(range);
+      btn.textContent = "Selected";
+    }
+    try {
+      navigator.clipboard.writeText(code.textContent).then(function () { btn.textContent = "Copied"; }, selectIt);
+    } catch (e) { selectIt(); }
+    setTimeout(function () { btn.textContent = "Copy"; }, 2000);
+  });
+})();
+</script>
+
+</html>
