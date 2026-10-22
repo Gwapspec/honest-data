@@ -1,4 +1,4 @@
-# Ready-made examples (43)
+# Ready-made examples (46)
 
 Each one runs one of our tools with a real input, shows the results, and can be started with one click on Apify (the free plan includes $5 of monthly credit).
 
@@ -59,3 +59,9 @@ Each one runs one of our tools with a real input, shows the results, and can be 
 - [YouTube video title ideas from autocomplete](https://apify.com/honestdata/autocomplete-keywords/examples/youtube-video-title-ideas): What YouTube and Google complete for a topic, merged and deduplicated, with how many engines agree. Autocomplete shows what people type, not search volume.
 - [Amazon product keyword suggestions](https://apify.com/honestdata/autocomplete-keywords/examples/amazon-product-keyword-suggestions): What Amazon's US search box completes for a product seed, next to Google, Bing and YouTube, with engine agreement. Not search volume.
 - [SEO keyword ideas with a-z expansion](https://apify.com/honestdata/autocomplete-keywords/examples/seo-keyword-ideas-a-z): A seed phrase expanded with a-z across Google, Bing and DuckDuckGo: long-tail ideas, deduplicated, with engine agreement. Autocomplete, not search volume.
+
+## greenhouse-jobs-monitor
+
+- [Engineering jobs at Stripe and Datadog](https://apify.com/honestdata/greenhouse-jobs-monitor/examples/greenhouse-engineering-jobs-stripe-datadog): Open engineering roles from two Greenhouse boards, with days open, a 90+ day flag and pay ranges quoted in the description.
+- [New-job monitor for GitLab's Greenhouse board](https://apify.com/honestdata/greenhouse-jobs-monitor/examples/greenhouse-new-jobs-monitor-gitlab): Schedule daily: returns only GitLab jobs not delivered on earlier runs, so you pay once per job.
+- [Remote jobs at Coinbase and Discord](https://apify.com/honestdata/greenhouse-jobs-monitor/examples/greenhouse-remote-jobs-coinbase-discord): Remote roles from two Greenhouse boards with the pay range each description quotes.
