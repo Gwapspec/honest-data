@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Google Trends API in 2026: what actually works | Honest Data</title>
+<meta name="description" content="The official alpha API, pytrends, CSV exports and hosted scrapers compared, plus the two traps hidden in any Google Trends data.">
+<link rel="canonical" href="https://gwapspec.github.io/honest-data/google-trends-api.html">
+<style>
+:root{--bg:#F4F7F5;--surface:#FFFFFF;--ink:#13201B;--ink-2:#4B5953;--rule:#D5DFDA;--brand:#0B6E4F;--code:#EDF3F0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0C1310;--surface:#121B17;--ink:#E6EEE9;--ink-2:#A2B1AA;--rule:#26332D;--brand:#4FC496;--code:#1A2520}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 "Instrument Sans","Helvetica Neue",Arial,system-ui,sans-serif}
+main{max-width:780px;margin:0 auto;padding:28px 16px 64px}a{color:var(--brand)}
+h1{font-size:32px;line-height:1.15;margin:6px 0 12px;letter-spacing:-.01em}h2{font-size:22px;margin:34px 0 10px}h3{font-size:18px;margin:24px 0 8px}
+.muted,.foot{color:var(--ink-2);font-size:14px}.foot{border-top:1px solid var(--rule);margin-top:40px;padding-top:14px}
+.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:15px;margin:12px 0;background:var(--surface)}
+th,td{border:1px solid var(--rule);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code{font:14px "IBM Plex Mono",ui-monospace,Menlo,monospace;background:var(--code);padding:1px 4px;border-radius:4px}
+pre{background:var(--code);border:1px solid var(--rule);border-radius:10px;padding:14px;overflow-x:auto}pre code{background:none;padding:0}
+img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--rule)}li{margin:4px 0}
+</style>
+<main>
+<p class="muted"><a href="./">Honest Data</a> · updated 2026-10-21</p>
+<h1>Google Trends API in 2026: what actually works</h1>
+<p>Google Trends has no generally available official API. Here is what you can use today, and two problems every option shares.</p>
+<h2 id="your-options">Your options</h2>
+<div class="scroll"><table><thead><tr><th>Option</th><th>Access</th><th>Many keywords on one scale?</th><th>Notes</th></tr></thead><tbody><tr><td>Official Google Trends API (alpha)</td><td>Apply; Google opens access to a limited group on a rolling basis</td><td>Yes: values aren't rescaled 0-100 per request</td><td>Announced July 24, 2025. About 5 years (1,800 days) of daily to yearly data, with region and sub-region filters. We found no public pricing or general-availability date (October 2026).</td></tr><tr><td>pytrends (unofficial Python library)</td><td>Free (<code>pip install pytrends</code>)</td><td>No: each request is scaled 0-100 on its own</td><td>Its GitHub repository is archived (read-only). Users commonly report HTTP 429 "too many requests" errors.</td></tr><tr><td>trends.google.com, CSV download</td><td>Free, by hand</td><td>No: up to 5 terms per comparison</td><td>Fine for a few terms. A small term next to a big one rounds to 0.</td></tr><tr><td>Hosted scrapers, e.g. on Apify Store</td><td>Pay per use, no setup</td><td>Depends: check whether separate requests share one scale</td><td>They run in the cloud and deal with rate limits for you.</td></tr></tbody></table></div>
+<h2 id="two-traps-in-any-trends-data">Two traps in any Trends data</h2>
+<ol><li><b>Per-request scaling.</b> Google scales every request so its top term is 100. Numbers from two requests can't be put side by side, and a small term next to a big one rounds to 0. The fix is to chain overlapping groups through a shared keyword: <a href="google-trends-glitch-2026.html#why-comparing-many-keywords-is-hard">how it works</a>.</li><li><b>Market-wide glitches.</b> From late March to mid-June 2026, small, unrelated US searches all ran about 2x their usual level at once, then snapped back. Growth rates and peak dates for long-tail terms across that window were inflated. The check is a basket of unrelated control terms, and we run it every morning: <a href="trends-check.html">Is Google Trends glitching today?</a></li></ol>
+<h2 id="what-we-built">What we built</h2>
+<p>Disclosure: we sell one of the hosted options. <a href="https://apify.com/honestdata/google-trends-one-scale">Google Trends Scraper: 200 Keywords on One Scale</a> puts up to 200 keywords on one scale with an error bar for each, runs the control-basket check on every run, and flags peaks and growth that touch a market-wide jump. It costs $0.005 per keyword, and keywords with no usable data are free. It runs on Apify, so you can call it from Python, JavaScript, n8n, Make or Zapier.</p>
+<h2 id="faq">FAQ</h2>
+<p><b>Is there an official Google Trends API?</b> Only an alpha with gated access, announced in July 2025. Apply through Google's Trends API page.</p>
+<p><b>Why do I get 429 errors?</b> Google rate-limits Trends and doesn't publish the limits. In our experience, bursts of requests and shared cloud IPs hit them first; retrying from a fresh IP after a pause usually works.</p>
+<p><b>Can I compare more than 5 keywords?</b> Not in one request on the website. Chain overlapping groups through a shared keyword, or use a tool that does it for you.</p>
+<h2 id="sources">Sources</h2>
+<ul><li>Google's announcement: <a href="https://developers.google.com/search/blog/2025/07/trends-api">https://developers.google.com/search/blog/2025/07/trends-api</a></li><li>pytrends repository (archived): <a href="https://github.com/GeneralMills/pytrends">https://github.com/GeneralMills/pytrends</a></li><li>Our spring-2026 glitch research, with weekly data (CC BY): <a href="https://github.com/Gwapspec/honest-data/tree/main/research/google-trends-2026-glitch">https://github.com/Gwapspec/honest-data/tree/main/research/google-trends-2026-glitch</a></li></ul>
+<p class="foot">More from Honest Data: <a href="youtube-transcript-api.html">YouTube transcript API in 2026</a> · <a href="google-trends-glitch-2026.html">The spring-2026 Google Trends glitch</a> · <a href="trends-check.html">Is Google Trends glitching today?</a></p>
+</main>
+</html>
