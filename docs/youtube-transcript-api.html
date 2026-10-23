@@ -19,7 +19,7 @@ pre{background:var(--code);border:1px solid var(--rule);border-radius:10px;paddi
 img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--rule)}li{margin:4px 0}
 </style>
 <main>
-<p class="muted"><a href="./">Honest Data</a> · updated 2026-10-21</p>
+<p class="muted"><a href="./">Honest Data</a> · updated 2026-10-22</p>
 <h1>YouTube transcript API: what works in 2026</h1>
 <p>Getting the transcript of a public YouTube video sounds like one API call. In practice there are three routes, and two of them stop working in production for most people.</p>
 <h2 id="your-options">Your options</h2>
@@ -28,6 +28,10 @@ img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--rule)}li
 <ol><li><b>Manual or auto-generated?</b> Auto captions come from speech recognition and often miss names, numbers and jargon. If you feed transcripts to an AI, label which is which.</li><li><b>The right language?</b> Some tools quietly fall back to another language when yours isn't available.</li><li><b>Coverage.</b> How much of the video has words on screen? A long video with a short transcript is missing pieces, or is mostly music.</li><li><b>Sound tags.</b> Lines like [Music] and (Applause) add noise to search and embeddings.</li><li><b>Videos without captions.</b> Some tools fail the whole run, others silently return nothing. You want a row that says why.</li></ol>
 <h2 id="what-we-built">What we built</h2>
 <p>Disclosure: we sell one of the hosted options. <a href="https://apify.com/honestdata/youtube-transcript-scraper">YouTube Transcript Scraper</a> returns each transcript as text and timed segments, labelled manual or auto-generated, with a language check and a coverage figure. Videos without a transcript come back as rows that say why, and they aren't charged. It costs $0.002 per transcript. Each video is tried on a data-center IP first and moves to a residential one if YouTube refuses. It runs on Apify, so you can call it from Python, JavaScript, n8n, Make or Zapier.</p>
+<h2 id="from-a-server-a-free-python-client">From a server: a free Python client</h2>
+<p>If your youtube-transcript-api code works on your laptop but gets <code>RequestBlocked</code> on AWS, Google Cloud, Azure or Colab, <a href="https://github.com/Gwapspec/youtube-transcript-cloud">youtube-transcript-cloud</a> (MIT, no dependencies) gives you the same <code>{"text", "start", "duration"}</code> snippets through the hosted tool:</p>
+<pre><code>from youtube_transcript_cloud import TranscriptClient   # pip install git+https://github.com/Gwapspec/youtube-transcript-cloud
+data = TranscriptClient().fetch(video_id).to_raw_data()  # reads APIFY_TOKEN</code></pre>
 <h2 id="faq">FAQ</h2>
 <p><b>Is there an official API for YouTube transcripts?</b> Only <code>captions.download</code>, and only for videos you have permission to edit.</p>
 <p><b>Why does youtube-transcript-api fail on my server?</b> Per its README, YouTube blocks most IPs that belong to cloud providers. Rotating residential proxies are the workaround it recommends.</p>
