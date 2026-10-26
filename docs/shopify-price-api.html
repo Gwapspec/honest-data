@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shopify product prices API: how to read store prices and check discounts | Honest Data</title>
+<meta name="description" content="Shopify&#x27;s products.json, WooCommerce&#x27;s Store API, the admin APIs and hosted scrapers compared for tracking prices, plus why a &quot;50% off&quot; tag needs a second look.">
+<link rel="canonical" href="https://gwapspec.github.io/honest-data/shopify-price-api.html">
+<style>
+:root{--bg:#F4F7F5;--surface:#FFFFFF;--ink:#13201B;--ink-2:#4B5953;--rule:#D5DFDA;--brand:#0B6E4F;--code:#EDF3F0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0C1310;--surface:#121B17;--ink:#E6EEE9;--ink-2:#A2B1AA;--rule:#26332D;--brand:#4FC496;--code:#1A2520}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 "Instrument Sans","Helvetica Neue",Arial,system-ui,sans-serif}
+main{max-width:780px;margin:0 auto;padding:28px 16px 64px}a{color:var(--brand)}
+h1{font-size:32px;line-height:1.15;margin:6px 0 12px;letter-spacing:-.01em}h2{font-size:22px;margin:34px 0 10px}h3{font-size:18px;margin:24px 0 8px}
+.muted,.foot{color:var(--ink-2);font-size:14px}.foot{border-top:1px solid var(--rule);margin-top:40px;padding-top:14px}
+.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:15px;margin:12px 0;background:var(--surface)}
+th,td{border:1px solid var(--rule);padding:8px 10px;text-align:left;vertical-align:top}th{background:var(--code)}
+code{font:14px "IBM Plex Mono",ui-monospace,Menlo,monospace;background:var(--code);padding:1px 4px;border-radius:4px}
+pre{background:var(--code);border:1px solid var(--rule);border-radius:10px;padding:14px;overflow-x:auto}pre code{background:none;padding:0}
+img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--rule)}li{margin:4px 0}
+</style>
+<main>
+<p class="muted"><a href="./">Honest Data</a> · updated 2026-10-26</p>
+<h1>Shopify product prices API: how to read store prices and check discounts</h1>
+<p>You can read the prices of most Shopify and WooCommerce stores without an account. Here is what each option gives you, and what none of them can tell you.</p>
+<h2 id="your-options">Your options</h2>
+<div class="scroll"><table><thead><tr><th>Option</th><th>Access</th><th>Covers</th><th>Notes</th></tr></thead><tbody><tr><td>Store's own <code>/products.json</code> (Shopify)</td><td>Free, no login, up to 250 products per page</td><td>Any Shopify store that leaves it on</td><td>Open JSON with variants, price, compare-at price and an availability flag per variant. Stores can switch it off or password-protect the shop. Prices are in the store's default currency; the feed doesn't state the currency (<code>/meta.json</code> does).</td></tr><tr><td>WooCommerce Store API (<code>/wp-json/wc/store/v1/products</code>)</td><td>Free, no login, up to 100 products per page</td><td>WooCommerce stores that leave the public Store API on</td><td>Prices come as whole numbers in the currency's smallest unit (1999 = 19.99), with the currency code in the same response.</td></tr><tr><td>Shopify Admin or Storefront API</td><td>Needs the store owner's access token</td><td>Your own store, or a partner's</td><td>The right tool for your own shop. It can't read a competitor's.</td></tr><tr><td>Hosted scrapers, e.g. on Apify Store</td><td>Pay per use, no setup</td><td>Depends on the tool</td><td>Run in the cloud, deal with rate limits and paging. Most charge about $0.001 per product; check whether they report discounts and changes.</td></tr></tbody></table></div>
+<h2 id="what-a-price-feed-can-t-tell-you">What a price feed can't tell you</h2>
+<ol><li><b>The compare-at price is typed in by the store.</b> A "was $50, now $25" tag only means the field says 50. Compare the same product across weeks and stores before you call it a deal.</li><li><b>The feed doesn't say how long a sale has run.</b> <code>updated_at</code> moves on any edit, so it isn't a sale start. The only way to know is to read the store on a schedule and keep what you saw.</li></ol>
+<h2 id="what-we-built">What we built</h2>
+<p>Disclosure: we sell one of the hosted options. <a href="https://apify.com/honestdata/shopify-store-prices">Shopify &amp; WooCommerce Price Scraper: Real Discounts</a> reads both platforms, reports a discount only where the compare-at price is above the price (per variant), and with "only new or changed" on a schedule bills only products whose price or stock changed since your last run (a price that returns to an earlier value counts as a change). It costs $0.001 per product, and stores it can't read are free with the reason.</p>
+<h2 id="faq">FAQ</h2>
+<p><b>Is there an official way to read another store's prices?</b> No. Shopify's APIs need that store's token; the public feeds above are what stores publish themselves.</p>
+<p><b>Why does a store return HTTP 429?</b> Some stores rate-limit or block datacenter IPs. We saw bombas.com refuse its product feed in 4 of 5 runs, even through residential IPs; others, like allbirds.com and gymshark.com, answered freely.</p>
+<p><b>Can it show when a sale started?</b> Not from one run. Schedule it and compare runs.</p>
+<h2 id="sources">Sources</h2>
+<ul><li>WooCommerce Store API, products endpoint: <a href="https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/src/StoreApi/docs/products.md">https://github.com/woocommerce/woocommerce/blob/trunk/plugins/woocommerce/src/StoreApi/docs/products.md</a></li><li>Shopify Admin API authentication (access token required): <a href="https://shopify.dev/docs/api/usage/authentication">https://shopify.dev/docs/api/usage/authentication</a></li><li>Our test run: 10 stores that had an open feed, 200 of 200 requested products returned (Apify run 9RHxxAGscDTkHcLzh). 10 of the 13 well-known Shopify stores we tried could be read.</li></ul>
+<p class="foot">More from Honest Data: <a href="google-trends-api.html">Google Trends API in 2026</a> · <a href="youtube-transcript-api.html">YouTube transcript API in 2026</a> · <a href="google-trends-glitch-2026.html">The spring-2026 Google Trends glitch</a> · <a href="trends-check.html">Is Google Trends glitching today?</a></p>
+</main>
+</html>

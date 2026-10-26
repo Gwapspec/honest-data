@@ -1,4 +1,4 @@
-# Ready-made examples (50)
+# Ready-made examples (53)
 
 Each one runs one of our tools with a real input, shows the results, and can be started with one click on Apify (the free plan includes $5 of monthly credit).
 
@@ -69,3 +69,9 @@ Each one runs one of our tools with a real input, shows the results, and can be 
 - [Remote jobs at Coinbase and Discord](https://apify.com/honestdata/greenhouse-jobs-monitor/examples/greenhouse-remote-jobs-coinbase-discord): Remote roles from two Greenhouse boards with the pay range each description quotes.
 - [Data and analytics jobs at Airbnb and Figma](https://apify.com/honestdata/greenhouse-jobs-monitor/examples/greenhouse-data-jobs-airbnb-figma): Open data and analytics roles from two Greenhouse boards, with days open and the pay range each description quotes.
 - [London jobs at Monzo and Cloudflare](https://apify.com/honestdata/greenhouse-jobs-monitor/examples/greenhouse-london-jobs-monzo-cloudflare): Open roles located in London from two Greenhouse boards, with days open and quoted pay ranges.
+
+## shopify-store-prices
+
+- [Allbirds and Gymshark prices and real discounts](https://apify.com/honestdata/shopify-store-prices/examples/allbirds-gymshark-prices-and-discounts): Current prices, compare-at prices and the real discount for products from two Shopify stores, with stock flags.
+- [Shopify sale items only: what is discounted at Allbirds](https://apify.com/honestdata/shopify-store-prices/examples/shopify-sale-items-only-allbirds): Only products currently on sale at a Shopify store, with price against compare-at price and the discount percentage.
+- [Daily Shopify price monitor: changed products only](https://apify.com/honestdata/shopify-store-prices/examples/daily-shopify-price-monitor-changes-only): Schedule this daily: after the first run it bills and returns only products whose price or stock changed since your last run.
